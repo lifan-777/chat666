@@ -1,0 +1,15 @@
+{
+  "name": "campus-market-pptgen",
+  "private": true,
+  "description": "生成答辩演示文稿 docs/06-答辩演示.pptx",
+  "scripts": {
+    "build": "node build-deck.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-icons": "^5.3.0",
+    "sharp": "^0.33.5"
+  }
+}

@@ -36,7 +36,8 @@ public class JwtTokenProvider {
                 .subject(String.valueOf(userId))
                 .issuedAt(now)
                 .expiration(new Date(now.getTime() + ttl.toMillis()))
-                .signWith(key)
+                // 显式指定 HS256；不指定时 jjwt 会按密钥长度自动选择 HS384/HS512
+                .signWith(key, Jwts.SIG.HS256)
                 .compact();
     }
 
