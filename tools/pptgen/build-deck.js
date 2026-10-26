@@ -240,7 +240,7 @@ async function build() {
         slide.addText(rows.map(([k, v], i) => ({
             text: `${k}：${v}`, options: { breakLine: i < rows.length - 1, paraSpaceAfter: 4 },
         })), { x: M, y: 3.1, w: 4.2, h: 1.25, fontSize: 14, color: 'E5E7EB', margin: 0, valign: 'top', isTextBox: true });
-        slide.addText(INFO.date, { x: M, y: 4.6, w: 4, h: 0.3, fontSize: 12, color: '9CA3AF', margin: 0, isTextBox: true });
+        slide.addText(`${INFO.school}  ${INFO.college}  ·  ${INFO.date}`, { x: M, y: 4.6, w: 5, h: 0.3, fontSize: 12, color: '9CA3AF', margin: 0, isTextBox: true });
         // 右侧系统截图
         const shot = 'docs/screenshots/01-home.png';
         slide.addShape(pres.shapes.ROUNDED_RECTANGLE, { x: 5.55, y: 1.05, w: 4.2, h: 2.85, rectRadius: 0.1, fill: { color: '374151' }, line: { color: '4B5563', width: 1 }, objectName: 'cover-frame' });
@@ -736,7 +736,7 @@ async function build() {
     section('总结展望');
     {
         const slide = contentSlide('06  总结展望', '项目进度安排',
-            '项目从 9 月 14 日开始，历时约 6 周：第一周需求分析并评审，第二周完成概要和详细设计，'
+            '项目从 9 月 18 日开始，历时约 6 周：第一周需求分析并评审，第二周完成概要和详细设计，'
             + '随后前后端并行编码约两周半，测试和编码后期重叠进行，最后半周整理文档、准备答辩。四个里程碑分别是需求评审、设计评审、系统提测和项目验收。');
         framedImage(slide, 'docs/diagrams/gantt.png', { x: M, y: 1.3, w: 9, h: 3.85 });
     }

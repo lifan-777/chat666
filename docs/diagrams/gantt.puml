@@ -34,32 +34,30 @@ ganttDiagram {
 </style>
 language zh
 printscale weekly zoom 3
-Project starts 2026-09-14
-saturday are closed
-sunday are closed
+Project starts 2026-09-18
 
 -- 需求阶段 --
-[需求调研与分析] starts 2026-09-14 and ends 2026-09-18
-[编写需求规格说明书] starts 2026-09-16 and ends 2026-09-18
-[需求评审] happens 2026-09-18
+[需求调研与分析] starts 2026-09-18 and ends 2026-09-22
+[编写需求规格说明书] starts 2026-09-20 and ends 2026-09-22
+[需求评审] happens 2026-09-22
 
 -- 设计阶段 --
-[概要设计（架构、模块）] starts 2026-09-21 and ends 2026-09-23
-[详细设计（数据库、接口）] starts 2026-09-23 and ends 2026-09-25
-[设计评审] happens 2026-09-25
+[概要设计（架构、模块）] starts 2026-09-25 and ends 2026-09-27
+[详细设计（数据库、接口）] starts 2026-09-27 and ends 2026-09-29
+[设计评审] happens 2026-09-29
 
 -- 实现阶段 --
-[后端编码（Spring Boot）] starts 2026-09-28 and ends 2026-10-14
-[前端编码（Vue 3）] starts 2026-09-30 and ends 2026-10-14
-[系统提测] happens 2026-10-14
+[后端编码（Spring Boot）] starts 2026-10-02 and ends 2026-10-18
+[前端编码（Vue 3）] starts 2026-10-04 and ends 2026-10-18
+[系统提测] happens 2026-10-18
 
 -- 测试阶段 --
-[单元测试与接口测试] starts 2026-10-08 and ends 2026-10-14
-[系统测试与缺陷修复] starts 2026-10-15 and ends 2026-10-20
+[单元测试与接口测试] starts 2026-10-12 and ends 2026-10-18
+[系统测试与缺陷修复] starts 2026-10-19 and ends 2026-10-24
 
 -- 收尾阶段 --
-[文档整理与答辩准备] starts 2026-10-20 and ends 2026-10-23
-[项目验收] happens 2026-10-23
+[文档整理与答辩准备] starts 2026-10-24 and ends 2026-10-27
+[项目验收] happens 2026-10-27
 
 [需求评审] -> [概要设计（架构、模块）]
 [设计评审] -> [后端编码（Spring Boot）]
