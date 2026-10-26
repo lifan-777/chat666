@@ -1,0 +1,26 @@
+@startuml state-order
+!include style.iuml
+skinparam ArrowFontSize 12
+skinparam nodesep 60
+skinparam ranksep 55
+hide empty description
+
+state "PENDING\n待卖家确认" as PENDING
+state "CONFIRMED\n待交易" as CONFIRMED
+state "COMPLETED\n已完成" as COMPLETED #DCFCE7
+state "CANCELLED\n已取消" as CANCELLED #E5E7EB
+
+[*] --> PENDING : 买家下单\n商品 → RESERVED
+PENDING --> CONFIRMED : 卖家确认订单\n记录 confirmedAt
+CONFIRMED --> COMPLETED : 买家当面验货后确认收货\n商品 → SOLD，记录 completedAt
+PENDING --> CANCELLED : 买家或卖家取消
+CONFIRMED --> CANCELLED : 买家或卖家取消
+COMPLETED --> [*]
+CANCELLED --> [*]
+
+note right of CANCELLED
+  记录取消方与原因
+  （如“买家取消：时间约不上”）
+  商品自动恢复为 ON_SALE
+end note
+@enduml

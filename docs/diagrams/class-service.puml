@@ -1,0 +1,125 @@
+@startuml class-service
+!include style.iuml
+skinparam nodesep 35
+skinparam ranksep 55
+skinparam ClassFontStyle bold
+hide empty members
+hide circle
+
+package "安全组件 security" <<Rectangle>> {
+  class AuthInterceptor <<HandlerInterceptor>> {
+    + preHandle(req, resp, handler) : boolean
+    + afterCompletion(...) : void
+    - resolveUser(req) : User
+  }
+  class JwtTokenProvider {
+    - key : SecretKey
+    - ttl : Duration
+    + createToken(userId) : String
+    + parseUserId(token) : Optional<Long>
+  }
+  class UserContext <<ThreadLocal>> {
+    + {static} current() : Optional<User>
+    + {static} require() : User
+  }
+  annotation PublicApi
+}
+
+package "控制层 controller" <<Rectangle>> {
+  class AuthController {
+    + register(RegisterRequest) : UserVO
+    + login(LoginRequest) : LoginResponse
+    + me() : UserVO
+  }
+  class GoodsController {
+    + search(GoodsQuery) : PageResult<GoodsVO>
+    + detail(id) : GoodsVO
+    + publish(GoodsRequest) : GoodsVO
+    + update(id, GoodsRequest) : GoodsVO
+    + offShelf(id) / reShelf(id)
+  }
+  class OrderController {
+    + create(CreateOrderRequest) : OrderVO
+    + list(role, status, page, size)
+    + confirm(id) / complete(id)
+    + cancel(id, ReasonRequest)
+  }
+  class AdminGoodsController {
+    + list(status, keyword, page, size)
+    + audit(id, AuditRequest) : GoodsVO
+    + offShelf(id, ReasonRequest)
+  }
+}
+
+package "业务层 service" <<Rectangle>> {
+  class UserService {
+    + register(req) : UserVO
+    + login(req) : LoginResponse
+    + updateProfile(userId, req) : UserVO
+    + changePassword(userId, req)
+    + updateStatus(userId, status) : UserVO
+  }
+  class GoodsService {
+    + publish(seller, req) : GoodsVO
+    + update(user, id, req) : GoodsVO
+    + offShelf(user, id) / reShelf(user, id)
+    + search(query) : PageResult<GoodsVO>
+    + detail(id, viewer) : GoodsVO
+    + audit(id, AuditRequest) : GoodsVO
+    + forceOffShelf(id, reason) : GoodsVO
+  }
+  class OrderService {
+    + create(buyer, req) : OrderVO
+    + confirm(seller, orderId) : OrderVO
+    + complete(buyer, orderId) : OrderVO
+    + cancel(user, orderId, reason) : OrderVO
+    + listAsBuyer(...) / listAsSeller(...)
+  }
+}
+
+package "数据访问层 repository" <<Rectangle>> {
+  interface "JpaRepository<T, Long>" as JpaRepository
+  interface UserRepository {
+    + findByUsername(username) : Optional<User>
+    + existsByUsername(username) : boolean
+  }
+  interface GoodsRepository {
+    + compareAndSetStatus(id, from, to) : int
+    + increaseViewCount(id) : void
+    + countGroupByCategory() : List<Object[]>
+  }
+  interface TradeOrderRepository {
+    + findByBuyerId(buyerId, pageable)
+    + findBySellerId(sellerId, pageable)
+    + sumPriceByStatus(status) : BigDecimal
+  }
+}
+
+AuthInterceptor --> JwtTokenProvider : 解析令牌
+AuthInterceptor --> UserRepository : 查询用户
+AuthInterceptor ..> UserContext : 设置当前用户
+AuthInterceptor ..> PublicApi : 判断是否公开接口
+
+AuthController --> UserService
+GoodsController --> GoodsService
+OrderController --> OrderService
+AdminGoodsController --> GoodsService
+
+UserService --> UserRepository
+UserService --> JwtTokenProvider : 签发令牌
+GoodsService --> GoodsRepository
+OrderService --> TradeOrderRepository
+OrderService --> GoodsRepository : 条件更新防超卖
+GoodsService <-left- OrderService : 读取商品
+
+UserRepository --|> JpaRepository
+GoodsRepository --|> JpaRepository
+TradeOrderRepository --|> JpaRepository
+
+
+note bottom of JpaRepository
+  其余组件同理：FavoriteService、CommentService、
+  CategoryService、StatsService、FileService 及对应的
+  Controller / Repository，详见软件设计说明书接口清单
+end note
+@enduml

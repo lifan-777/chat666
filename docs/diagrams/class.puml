@@ -1,0 +1,125 @@
+@startuml class
+!include style.iuml
+skinparam nodesep 40
+skinparam ranksep 50
+skinparam ClassFontStyle bold
+skinparam groupInheritance 2
+hide empty members
+
+abstract class BaseEntity <<MappedSuperclass>> {
+  - id : Long
+  - createdAt : LocalDateTime
+  - updatedAt : LocalDateTime
+  # onCreate() : void
+  # onUpdate() : void
+}
+
+class User <<Entity>> {
+  - username : String
+  - password : String  // BCrypt
+  - nickname : String
+  - phone : String
+  - role : Role
+  - status : UserStatus
+  + isAdmin() : boolean
+  + isBanned() : boolean
+}
+
+class Category <<Entity>> {
+  - name : String
+  - icon : String
+  - sortOrder : Integer
+}
+
+class Goods <<Entity>> {
+  - title : String
+  - description : String
+  - price : BigDecimal
+  - originalPrice : BigDecimal
+  - conditionLevel : ConditionLevel
+  - tradeLocation : String
+  - images : List<String>
+  - status : GoodsStatus
+  - rejectReason : String
+  - viewCount : Integer
+}
+
+class TradeOrder <<Entity>> {
+  - orderNo : String
+  - goodsTitle : String  // 快照
+  - goodsImage : String  // 快照
+  - price : BigDecimal   // 快照
+  - status : OrderStatus
+  - buyerRemark : String
+  - cancelReason : String
+  - confirmedAt : LocalDateTime
+  - completedAt : LocalDateTime
+  - cancelledAt : LocalDateTime
+}
+
+class Favorite <<Entity>>
+
+class Comment <<Entity>> {
+  - content : String
+}
+
+package "枚举类型" <<Rectangle>> {
+  enum Role {
+    USER   普通用户
+    ADMIN  管理员
+  }
+  enum UserStatus {
+    NORMAL  正常
+    BANNED  已封禁
+  }
+  enum GoodsStatus {
+    PENDING    待审核
+    ON_SALE    在售
+    REJECTED   审核未通过
+    RESERVED   交易中
+    SOLD       已售出
+    OFF_SHELF  已下架
+  }
+  enum ConditionLevel {
+    NEW           全新
+    LIKE_NEW      几乎全新
+    LIGHTLY_USED  轻微使用痕迹
+    USED          明显使用痕迹
+  }
+  enum OrderStatus {
+    PENDING    待卖家确认
+    CONFIRMED  待交易
+    COMPLETED  已完成
+    CANCELLED  已取消
+  }
+}
+
+BaseEntity <|-- Favorite
+BaseEntity <|-- Comment
+BaseEntity <|-- Category
+BaseEntity <|-- Goods
+BaseEntity <|-- User
+BaseEntity <|-- TradeOrder
+
+Goods "0..*" -left-> "1" Category : category >
+Goods "0..*" -right-> "1" User : seller >
+Favorite "0..*" -down-> "1" Goods : goods >
+Favorite "0..*" -down-> "1" User : user >
+Comment "0..*" -down-> "1" Goods : goods >
+Comment "0..*" -down-> "1" User : user >
+Comment "0..*" -down-> "0..1" User : replyTo >
+TradeOrder "0..*" -up-> "1" Goods : goods >
+TradeOrder "0..*" -up-> "1" User : buyer >
+TradeOrder "0..*" -up-> "1" User : seller >
+
+Role -[hidden]right- UserStatus
+UserStatus -[hidden]right- GoodsStatus
+GoodsStatus -[hidden]right- ConditionLevel
+ConditionLevel -[hidden]right- OrderStatus
+TradeOrder -[hidden]down- GoodsStatus
+
+note right of Favorite
+  唯一约束 (user_id, goods_id)：
+  同一用户对同一商品只收藏一次
+end note
+@enduml

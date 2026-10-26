@@ -1,0 +1,11 @@
+# 使用方式：java -jar campus-market.jar --spring.profiles.active=mysql
+# 运行前请先创建数据库：CREATE DATABASE campus_market DEFAULT CHARACTER SET utf8mb4;
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/campus_market?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  h2:
+    console:
+      enabled: false

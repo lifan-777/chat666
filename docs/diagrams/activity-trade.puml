@@ -1,0 +1,49 @@
+@startuml activity-trade
+!include style.iuml
+skinparam ArrowFontSize 12
+
+|#FFF7ED|买家|
+start
+:浏览、搜索商品;
+:查看商品详情\n留言咨询卖家;
+:点击“我想要”\n填写给卖家的留言;
+|#F9FAFB|系统|
+:校验登录状态与账号状态;
+if (商品在售且不是本人发布？) then (否)
+  :提示“商品当前不可购买”;
+  stop
+else (是)
+endif
+:条件更新商品状态\nON_SALE → RESERVED;
+if (更新成功？) then (否，已被他人抢先)
+  :提示“手慢了，商品已被其他同学下单”;
+  stop
+else (是)
+endif
+:创建订单（PENDING）\n保存标题、图片、价格快照;
+|#EFF6FF|卖家|
+:在“我卖出的”查看新订单\n及买家留言;
+if (同意交易？) then (是)
+  :确认订单;
+  |系统|
+  :订单 → CONFIRMED\n双方可见对方联系电话;
+  |买家|
+  :与卖家约定时间、地点;
+  :线下当面验货并付款;
+  if (交易顺利？) then (否)
+    :买家取消订单\n并填写原因;
+  else (是)
+    |买家|
+    :确认收货;
+    |系统|
+    :订单 → COMPLETED\n商品 → SOLD;
+    stop
+  endif
+else (否)
+  |卖家|
+  :卖家取消订单\n并填写原因;
+endif
+|系统|
+:订单 → CANCELLED\n商品恢复为 ON_SALE;
+stop
+@enduml

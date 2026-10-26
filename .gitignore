@@ -1,0 +1,11 @@
+target/
+data/
+uploads/
+*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store
+~$*
+node_modules/
+e2e/output/fail-*.png

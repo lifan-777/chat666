@@ -1,0 +1,33 @@
+@startuml deployment
+!include style.iuml
+skinparam nodesep 50
+skinparam ranksep 50
+skinparam ArrowFontSize 12
+
+node "用户 PC / 手机" as Client {
+  artifact "浏览器\n（Chrome / Edge / Safari）" as Browser
+}
+
+node "应用服务器（Windows / Linux / macOS）" as Server {
+  node "JDK 17+ 运行环境" as JVM {
+    artifact "campus-market-1.0.0.jar\n（Spring Boot 可执行 jar）" as Jar {
+      component "内嵌 Tomcat\n:8080" as Tomcat
+      component "REST API\n/api/**" as Api
+      component "静态资源\nindex.html / js / css / lib" as Static
+    }
+  }
+  folder "./uploads\n用户上传的商品图片" as Uploads
+  database "H2 文件数据库\n./data/campus-market.mv.db\n（默认配置）" as H2
+}
+
+node "数据库服务器（可选）" as DbServer {
+  database "MySQL 8\ncampus_market\n（--spring.profiles.active=mysql）" as MySQL
+}
+
+Browser -right-> Tomcat : HTTP :8080\nJSON + JWT
+Tomcat --> Api
+Tomcat --> Static
+Api --> Uploads : 读写图片文件
+Api --> H2 : JDBC（默认）
+Api ..> MySQL : JDBC :3306（可选切换）
+@enduml

@@ -1,0 +1,8 @@
+{
+  "name": "campus-market-docgen",
+  "private": true,
+  "description": "生成项目 Word 文档",
+  "dependencies": {
+    "docx": "9.7.1"
+  }
+}

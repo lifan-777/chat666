@@ -1,0 +1,38 @@
+@startuml state-goods
+!include style.iuml
+skinparam ArrowFontSize 12
+skinparam nodesep 60
+skinparam ranksep 60
+hide empty description
+
+state "PENDING\n待审核" as PENDING
+state "ON_SALE\n在售" as ON_SALE #FFEDD5
+state "REJECTED\n审核未通过" as REJECTED
+state "RESERVED\n交易中" as RESERVED
+state "SOLD\n已售出" as SOLD #E5E7EB
+state "OFF_SHELF\n已下架" as OFF_SHELF
+
+[*] -down-> PENDING : 卖家发布商品
+PENDING -down-> ON_SALE : 管理员审核通过
+PENDING -right-> REJECTED : 管理员驳回\n（必须填写原因）
+REJECTED -up-> PENDING : 卖家修改后\n重新提交
+ON_SALE -up-> PENDING : 卖家编辑商品\n（需重新审核）
+ON_SALE -down-> RESERVED : 买家下单\n（条件更新防超卖）
+RESERVED -up-> ON_SALE : 买家或卖家\n取消订单
+RESERVED -down-> SOLD : 买家确认收货
+SOLD -down-> [*]
+
+ON_SALE -left-> OFF_SHELF : 卖家下架 /\n管理员强制下架
+PENDING -left-> OFF_SHELF : 卖家下架 /\n管理员强制下架
+REJECTED -down-> OFF_SHELF : 卖家下架
+OFF_SHELF -up-> PENDING : 卖家重新上架 /\n编辑后提交
+
+note right of RESERVED
+  交易中、已售出的商品
+  不能编辑，也不能下架
+end note
+note bottom of OFF_SHELF
+  管理员下架时
+  记录下架原因
+end note
+@enduml

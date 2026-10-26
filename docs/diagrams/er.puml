@@ -1,0 +1,117 @@
+@startuml er
+!include style.iuml
+hide circle
+skinparam nodesep 60
+skinparam ranksep 60
+skinparam ClassFontStyle bold
+skinparam ClassAttributeFontSize 12
+
+entity "users（用户）" as users {
+  * id : BIGINT <<PK>>
+  --
+  * username : VARCHAR(20) <<UK>>
+  * password : VARCHAR(100)
+  * nickname : VARCHAR(20)
+    phone : VARCHAR(20)
+  * role : VARCHAR(10)
+  * status : VARCHAR(10)
+  * created_at : DATETIME
+  * updated_at : DATETIME
+}
+
+entity "category（分类）" as category {
+  * id : BIGINT <<PK>>
+  --
+  * name : VARCHAR(20) <<UK>>
+    icon : VARCHAR(30)
+  * sort_order : INT
+  * created_at : DATETIME
+  * updated_at : DATETIME
+}
+
+entity "goods（商品）" as goods {
+  * id : BIGINT <<PK>>
+  --
+  * title : VARCHAR(50)
+  * description : VARCHAR(2000)
+  * price : DECIMAL(10,2)
+    original_price : DECIMAL(10,2)
+  * category_id : BIGINT <<FK>>
+  * seller_id : BIGINT <<FK>>
+  * condition_level : VARCHAR(20)
+  * trade_location : VARCHAR(50)
+  * status : VARCHAR(20)
+    reject_reason : VARCHAR(200)
+  * view_count : INT
+  * created_at : DATETIME
+  * updated_at : DATETIME
+}
+
+entity "goods_image（商品图片）" as goods_image {
+  * goods_id : BIGINT <<PK,FK>>
+  * sort_order : INT <<PK>>
+  --
+  * url : VARCHAR(255)
+}
+
+entity "favorite（收藏）" as favorite {
+  * id : BIGINT <<PK>>
+  --
+  * user_id : BIGINT <<FK>>
+  * goods_id : BIGINT <<FK>>
+  * created_at : DATETIME
+  * updated_at : DATETIME
+  ..
+  UNIQUE (user_id, goods_id)
+}
+
+entity "comment（留言）" as comment {
+  * id : BIGINT <<PK>>
+  --
+  * goods_id : BIGINT <<FK>>
+  * user_id : BIGINT <<FK>>
+    reply_to_user_id : BIGINT <<FK>>
+  * content : VARCHAR(300)
+  * created_at : DATETIME
+  * updated_at : DATETIME
+}
+
+entity "trade_order（订单）" as trade_order {
+  * id : BIGINT <<PK>>
+  --
+  * order_no : VARCHAR(32) <<UK>>
+  * goods_id : BIGINT <<FK>>
+  * buyer_id : BIGINT <<FK>>
+  * seller_id : BIGINT <<FK>>
+  * goods_title : VARCHAR(50)
+    goods_image : VARCHAR(255)
+  * price : DECIMAL(10,2)
+  * status : VARCHAR(20)
+    buyer_remark : VARCHAR(200)
+    cancel_reason : VARCHAR(200)
+    confirmed_at : DATETIME
+    completed_at : DATETIME
+    cancelled_at : DATETIME
+  * created_at : DATETIME
+  * updated_at : DATETIME
+}
+
+category ||--o{ goods : 包含
+users ||--o{ goods : 发布
+goods ||--|{ goods_image : 拥有
+users ||--o{ favorite : 收藏
+goods ||--o{ favorite : 被收藏
+goods ||--o{ comment : 留言
+users ||--o{ comment : 发表
+users |o--o{ comment : 被回复
+goods ||--o{ trade_order : 下单
+users ||--o{ trade_order : 购买
+users ||--o{ trade_order : 出售
+
+legend right
+  <b>图例</b>
+  标有 * 的字段：非空（NOT NULL）
+  PK / FK / UK ：主键 / 外键 / 唯一约束
+  连线端点：短竖线 = 1，圆圈 = 0（可选），鸦爪 = 多
+endlegend
+@enduml

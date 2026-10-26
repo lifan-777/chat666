@@ -1,0 +1,63 @@
+@startuml seq-audit
+!include style.iuml
+hide footbox
+skinparam ArrowFontSize 13
+skinparam NoteFontSize 12
+autonumber "<b>0."
+
+actor "卖家" as Seller
+actor "管理员" as Admin
+participant "浏览器" as UI
+participant "GoodsController" as GoodsCtrl
+participant "FileController" as FileCtrl
+participant "AdminGoodsController" as AdminCtrl
+participant "GoodsService" as Svc
+database "数据库" as DB
+
+== 发布商品 ==
+Seller -> UI : 选择图片、填写商品信息
+UI -> FileCtrl : POST /api/files/images（multipart）
+FileCtrl --> UI : {url: "/uploads/202610/xxx.jpg"}
+UI -> GoodsCtrl : POST /api/goods {title, price, categoryId, images, ...}
+GoodsCtrl -> GoodsCtrl : @Valid 参数校验\n（失败返回 400 与具体原因）
+GoodsCtrl -> Svc : publish(seller, request)
+Svc -> DB : INSERT goods（status = PENDING）
+Svc --> GoodsCtrl : GoodsVO
+GoodsCtrl --> UI : 200
+UI --> Seller : “发布成功，等待管理员审核”
+
+== 管理员审核 ==
+Admin -> UI : 打开“商品审核”
+UI -> AdminCtrl : GET /api/admin/goods?status=PENDING
+note right of AdminCtrl : 拦截器校验：/api/admin/** 仅管理员可访问，否则 403
+AdminCtrl -> Svc : adminSearch(PENDING, ...)
+Svc -> DB : 按提交时间升序查询待审核商品
+AdminCtrl --> UI : 待审核列表
+Admin -> UI : 查看详情，选择“通过”或“驳回”
+UI -> AdminCtrl : POST /api/admin/goods/{id}/audit {approved, reason}
+AdminCtrl -> Svc : audit(id, request)
+alt 商品不是 PENDING 状态
+  Svc --> AdminCtrl : 400 该商品不是待审核状态
+else approved = true
+  Svc -> DB : UPDATE status = ON_SALE，清空驳回原因
+else approved = false
+  alt 未填写原因
+    Svc --> AdminCtrl : 400 驳回时必须填写原因
+  else
+    Svc -> DB : UPDATE status = REJECTED，reject_reason = 原因
+  end
+end
+AdminCtrl --> UI : 200 GoodsVO
+UI --> Admin : 提示审核完成，刷新待审核数量
+
+== 卖家查看结果 ==
+Seller -> UI : 打开“我发布的”
+UI -> GoodsCtrl : GET /api/goods/mine
+GoodsCtrl -> Svc : listBySeller(sellerId, status, ...)
+GoodsCtrl --> UI : 商品列表（含状态与驳回原因）
+alt 已上架（ON_SALE）
+  UI --> Seller : 商品出现在首页，其他同学可以购买
+else 审核未通过（REJECTED）
+  UI --> Seller : 显示驳回原因，可修改后重新提交（再次进入 PENDING）
+end
+@enduml

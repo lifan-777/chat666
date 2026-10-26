@@ -1,0 +1,60 @@
+@startwbs modules
+skinparam dpi 150
+skinparam defaultFontName "WenQuanYi Zen Hei"
+<style>
+wbsDiagram {
+  FontName "WenQuanYi Zen Hei"
+  FontSize 13
+  LineColor #374151
+  RoundCorner 10
+  Padding 6
+  Margin 10
+  node {
+    BackgroundColor #FFFFFF
+    LineColor #374151
+  }
+  :depth(0) {
+    BackgroundColor #F97316
+    FontColor #FFFFFF
+    FontSize 16
+    FontStyle bold
+    LineColor #C2410C
+  }
+  :depth(1) {
+    BackgroundColor #FFF7ED
+    LineColor #F97316
+    FontStyle bold
+  }
+}
+</style>
+* 校园二手交易平台
+** 用户模块
+*** 用户注册
+*** 登录（JWT 令牌）
+*** 个人资料维护
+*** 修改密码
+** 商品模块
+*** 发布商品
+*** 图片上传
+*** 编辑商品
+*** 下架 / 重新上架
+*** 搜索与筛选排序
+*** 商品详情与浏览量
+** 交易模块
+*** 下单（防止超卖）
+*** 卖家确认订单
+*** 买家确认收货
+*** 取消订单
+*** 我买到的 / 我卖出的
+** 互动模块
+*** 收藏 / 取消收藏
+*** 我的收藏
+*** 留言与回复
+*** 删除留言
+** 后台管理模块
+*** 数据概览与图表
+*** 商品审核
+*** 违规商品下架
+*** 用户封禁 / 解封
+*** 分类管理
+@endwbs

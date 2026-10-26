@@ -1,0 +1,40 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: campus-market
+  # 默认使用文件型 H2 数据库，数据保存在 ./data 目录，重启不丢失
+  datasource:
+    url: jdbc:h2:file:./data/campus-market;MODE=MySQL;DATABASE_TO_LOWER=TRUE;AUTO_SERVER=TRUE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        default_batch_fetch_size: 50
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 20MB
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+
+app:
+  jwt:
+    # 生产环境请通过环境变量 APP_JWT_SECRET 覆盖
+    secret: ${APP_JWT_SECRET:campus-market-demo-secret-key-please-change-in-production-2026}
+    expire-hours: 168
+  upload-dir: ./uploads
+  # 首次启动（数据库为空）时写入演示数据
+  seed-demo-data: true

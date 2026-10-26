@@ -1,0 +1,238 @@
+{
+  "total": 108,
+  "passed": 108,
+  "failed": 0,
+  "skipped": 0,
+  "passRate": 100.0,
+  "durationSeconds": 35.9,
+  "testCaseCount": 103,
+  "byType": {
+    "单元测试": 76,
+    "接口集成测试": 27,
+    "并发测试": 5
+  },
+  "classes": [
+    {
+      "name": "UserServiceTest",
+      "displayName": "用户服务 UserService 单元测试",
+      "type": "单元测试",
+      "tests": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 1.7
+    },
+    {
+      "name": "GoodsServiceTest",
+      "displayName": "商品服务 GoodsService 单元测试",
+      "type": "单元测试",
+      "tests": 19,
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 4.75
+    },
+    {
+      "name": "OrderServiceTest",
+      "displayName": "订单服务 OrderService 单元测试",
+      "type": "单元测试",
+      "tests": 16,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.25
+    },
+    {
+      "name": "CategoryServiceTest",
+      "displayName": "分类服务 CategoryService 单元测试",
+      "type": "单元测试",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.1
+    },
+    {
+      "name": "FavoriteServiceTest",
+      "displayName": "收藏服务 FavoriteService 单元测试",
+      "type": "单元测试",
+      "tests": 4,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.06
+    },
+    {
+      "name": "CommentServiceTest",
+      "displayName": "留言服务 CommentService 单元测试",
+      "type": "单元测试",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.8
+    },
+    {
+      "name": "FileServiceTest",
+      "displayName": "文件服务 FileService 单元测试",
+      "type": "单元测试",
+      "tests": 6,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.09
+    },
+    {
+      "name": "StatsServiceTest",
+      "displayName": "统计服务 StatsService 单元测试",
+      "type": "单元测试",
+      "tests": 2,
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.82
+    },
+    {
+      "name": "JwtTokenProviderTest",
+      "displayName": "JWT 令牌 JwtTokenProvider 单元测试",
+      "type": "单元测试",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.04
+    },
+    {
+      "name": "AuthApiTest",
+      "displayName": "认证接口 /api/auth 集成测试",
+      "type": "接口集成测试",
+      "tests": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 1.86
+    },
+    {
+      "name": "TradeFlowIntegrationTest",
+      "displayName": "交易全流程集成测试",
+      "type": "接口集成测试",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 20.88
+    },
+    {
+      "name": "AdminApiTest",
+      "displayName": "管理后台接口 /api/admin 集成测试",
+      "type": "接口集成测试",
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 3.39
+    },
+    {
+      "name": "FileUploadApiTest",
+      "displayName": "图片上传接口 /api/files 集成测试",
+      "type": "接口集成测试",
+      "tests": 3,
+      "passed": 3,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.47
+    },
+    {
+      "name": "ConcurrentOrderTest",
+      "displayName": "并发下单（防超卖）测试",
+      "type": "并发测试",
+      "tests": 5,
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "timeSeconds": 0.63
+    }
+  ],
+  "coverage": {
+    "lineExcludingInit": 97.2,
+    "branchExcludingInit": 84.0,
+    "instruction": 81.0,
+    "branch": 80.1,
+    "line": 84.2,
+    "method": 93.3,
+    "linesCovered": 814,
+    "linesTotal": 967,
+    "byPackage": [
+      {
+        "package": "entity",
+        "line": 98.5,
+        "branch": 83.3,
+        "instruction": 98.8,
+        "linesTotal": 195
+      },
+      {
+        "package": "config",
+        "line": 94.7,
+        "branch": 50.0,
+        "instruction": 97.2,
+        "linesTotal": 19
+      },
+      {
+        "package": "controller",
+        "line": 98.3,
+        "branch": 75.0,
+        "instruction": 96.6,
+        "linesTotal": 59
+      },
+      {
+        "package": "controller.admin",
+        "line": 100.0,
+        "branch": 50.0,
+        "instruction": 97.8,
+        "linesTotal": 20
+      },
+      {
+        "package": "security",
+        "line": 98.1,
+        "branch": 85.0,
+        "instruction": 97.3,
+        "linesTotal": 52
+      },
+      {
+        "package": "service",
+        "line": 97.4,
+        "branch": 85.2,
+        "instruction": 95.9,
+        "linesTotal": 390
+      },
+      {
+        "package": "dto",
+        "line": 100.0,
+        "branch": 75.0,
+        "instruction": 99.7,
+        "linesTotal": 48
+      },
+      {
+        "package": "common",
+        "line": 85.3,
+        "branch": null,
+        "instruction": 86.2,
+        "linesTotal": 34
+      },
+      {
+        "package": "init",
+        "line": 11.6,
+        "branch": 7.1,
+        "instruction": 6.3,
+        "linesTotal": 147
+      },
+      {
+        "package": "(root)",
+        "line": 33.3,
+        "branch": null,
+        "instruction": 37.5,
+        "linesTotal": 3
+      }
+    ]
+  }
+}

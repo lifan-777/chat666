@@ -1,0 +1,59 @@
+@startuml seq-login
+!include style.iuml
+hide footbox
+skinparam ArrowFontSize 13
+skinparam NoteFontSize 12
+autonumber "<b>0."
+
+actor "用户" as User
+participant "浏览器\n(store.js / api.js)" as UI
+participant "AuthInterceptor" as Auth
+participant "AuthController" as AuthCtrl
+participant "UserService" as Svc
+participant "JwtTokenProvider" as Jwt
+participant "UserRepository" as Repo
+participant "业务 Controller" as BizCtrl
+
+== 登录：签发令牌 ==
+User -> UI : 输入用户名、密码
+UI -> Auth : POST /api/auth/login
+Auth -> Auth : 方法标注 @PublicApi，无需令牌，放行
+Auth -> AuthCtrl : login(request)
+AuthCtrl -> Svc : login(request)
+Svc -> Repo : findByUsername(username)
+Repo --> Svc : User
+Svc -> Svc : BCrypt.matches(明文密码, 密文)
+alt 用户不存在或密码错误
+  Svc --> UI : 401 用户名或密码错误
+else 账号已封禁
+  Svc --> UI : 403 账号已被封禁
+else 校验通过
+  Svc -> Jwt : createToken(userId)
+  Jwt --> Svc : JWT（HS256，有效期 7 天）
+  Svc --> AuthCtrl : LoginResponse{token, user}
+  AuthCtrl --> UI : 200
+  UI -> UI : 保存 token、用户信息到 localStorage
+  UI --> User : 跳转首页（管理员跳转管理后台）
+end
+
+== 后续请求：携带令牌鉴权 ==
+User -> UI : 执行需要登录的操作
+UI -> Auth : 任意 /api/** 请求\nAuthorization: Bearer <JWT>
+Auth -> Jwt : parseUserId(token)
+Jwt --> Auth : userId（签名错误或过期则为空）
+Auth -> Repo : findById(userId)
+Repo --> Auth : User（每次查询，封禁立即生效）
+alt 无有效用户 且 接口未标注 @PublicApi
+  Auth --> UI : 401 请先登录
+  UI -> UI : 清除本地令牌，跳转登录页
+else 用户已被封禁
+  Auth --> UI : 403 账号已被封禁
+else 访问 /api/admin/** 但不是管理员
+  Auth --> UI : 403 需要管理员权限
+else 校验通过
+  Auth -> Auth : UserContext.set(user)
+  Auth -> BizCtrl : 调用业务接口
+  BizCtrl --> UI : 200 业务数据
+  Auth -> Auth : afterCompletion：UserContext.clear()
+end
+@enduml

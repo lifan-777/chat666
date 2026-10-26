@@ -1,0 +1,89 @@
+@startuml usecase
+!include style.iuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam actorStyle awesome
+skinparam nodesep 18
+skinparam ranksep 70
+skinparam UsecaseBackgroundColor #FFFFFF
+
+actor "游客" as Guest
+actor "普通用户" as User
+actor "卖家" as Seller
+actor "买家" as Buyer
+actor "管理员" as Admin
+
+package "公共功能" as P1 {
+  usecase "浏览 / 搜索商品" as UC_Search
+  usecase "筛选与排序" as UC_Filter
+  usecase "查看商品详情" as UC_Detail
+  usecase "注册" as UC_Register
+  usecase "登录" as UC_Login
+}
+package "个人功能" as P2 {
+  usecase "维护个人资料" as UC_Profile
+  usecase "修改密码" as UC_Password
+  usecase "收藏 / 取消收藏" as UC_Fav
+  usecase "留言 / 回复" as UC_Comment
+}
+package "卖家功能" as P3 {
+  usecase "发布商品" as UC_Publish
+  usecase "上传商品图片" as UC_Upload
+  usecase "编辑商品" as UC_Edit
+  usecase "下架 / 重新上架" as UC_Shelf
+  usecase "确认订单" as UC_Confirm
+}
+package "买家功能" as P4 {
+  usecase "下单购买" as UC_Order
+  usecase "确认收货" as UC_Complete
+  usecase "取消订单" as UC_Cancel
+  usecase "查看我的订单" as UC_MyOrders
+}
+package "后台管理" as P5 {
+  usecase "审核商品" as UC_Audit
+  usecase "强制下架违规商品" as UC_Force
+  usecase "封禁 / 解封用户" as UC_Ban
+  usecase "分类管理" as UC_Category
+  usecase "数据统计" as UC_Stats
+}
+
+' 左侧：游客、普通用户
+User -|> Guest
+Guest --> UC_Search
+Guest --> UC_Detail
+Guest --> UC_Register
+Guest --> UC_Login
+User --> UC_Profile
+User --> UC_Password
+User --> UC_Fav
+User --> UC_Comment
+
+' 让右侧三个包排在第二列
+
+UC_Login -[hidden]-> UC_Publish
+UC_Comment -[hidden]-> UC_Order
+UC_Detail -[hidden]-> UC_Audit
+
+UC_Search <. UC_Filter : <<extend>>
+UC_Publish .> UC_Upload : <<include>>
+
+' 右侧：卖家、买家、管理员（反向书写让参与者位于右侧）
+UC_Publish <-- Seller
+UC_Edit <-- Seller
+UC_Shelf <-- Seller
+UC_Confirm <-- Seller
+UC_Cancel <-- Seller
+UC_Order <-- Buyer
+UC_Complete <-- Buyer
+UC_Cancel <-- Buyer
+UC_MyOrders <-- Buyer
+UC_Audit <-- Admin
+UC_Force <-- Admin
+UC_Ban <-- Admin
+UC_Category <-- Admin
+UC_Stats <-- Admin
+
+note "买家、卖家都是已登录的普通用户，\n继承普通用户和游客的全部用例" as N1
+Seller .. N1
+Buyer .. N1
+@enduml

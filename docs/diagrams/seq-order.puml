@@ -1,0 +1,71 @@
+@startuml seq-order
+!include style.iuml
+hide footbox
+skinparam ArrowFontSize 13
+skinparam NoteFontSize 12
+autonumber "<b>0."
+skinparam SequenceMessageAlign left
+
+actor "买家" as Buyer
+participant "浏览器\n商品详情页" as UI
+participant "AuthInterceptor" as Auth
+participant "OrderController" as Ctrl
+participant "OrderService" as Svc
+participant "GoodsRepository" as GoodsRepo
+participant "TradeOrderRepository" as OrderRepo
+database "数据库" as DB
+
+Buyer -> UI : 点击“我想要”，填写留言并确认下单
+UI -> Auth : POST /api/orders {goodsId, remark}\nAuthorization: Bearer <JWT>
+activate Auth
+Auth -> Auth : 解析 JWT，查询用户\n检查是否封禁
+alt 未登录 / 令牌无效
+  Auth --> UI : 401 请先登录
+else 账号已封禁
+  Auth --> UI : 403 账号已被封禁
+end
+Auth -> Ctrl : create(request)\n（UserContext 中保存当前买家）
+deactivate Auth
+activate Ctrl
+Ctrl -> Svc : create(buyer, request)
+activate Svc
+note right of Svc : @Transactional 开启事务
+Svc -> DB : 查询商品 goods
+DB --> Svc : goods
+alt 商品不存在
+  Svc --> Ctrl : 404 商品不存在
+else 卖家是自己
+  Svc --> Ctrl : 400 不能购买自己发布的商品
+else 商品状态不是 ON_SALE
+  Svc --> Ctrl : 409 商品当前不可购买
+end
+
+Svc -> GoodsRepo : compareAndSetStatus(id, ON_SALE, RESERVED)
+activate GoodsRepo
+GoodsRepo -> DB : UPDATE goods SET status = 'RESERVED'\nWHERE id = ? AND status = 'ON_SALE'
+DB --> GoodsRepo : 受影响行数
+GoodsRepo --> Svc : rows
+deactivate GoodsRepo
+
+alt rows = 0（同一时刻已被其他买家抢先锁定）
+  Svc --> Ctrl : BusinessException(409)\n“手慢了，商品已被其他同学下单”
+  Ctrl --> UI : 409 {code, message}（事务回滚）
+  UI --> Buyer : 弹出错误提示，刷新商品状态
+else rows = 1（锁定成功）
+  Svc -> Svc : 生成订单号；保存商品标题、\n图片、价格快照；状态 PENDING
+  Svc -> OrderRepo : save(order)
+  activate OrderRepo
+  OrderRepo -> DB : INSERT INTO trade_order ...
+  deactivate OrderRepo
+  Svc --> Ctrl : OrderVO
+  deactivate Svc
+  Ctrl --> UI : 200 {code: 0, data: OrderVO}
+  deactivate Ctrl
+  UI --> Buyer : 提示下单成功，跳转“我买到的”
+end
+
+note over Auth, Ctrl
+  业务异常统一由 GlobalExceptionHandler
+  转换为 {code, message, data} 结构返回
+end note
+@enduml
