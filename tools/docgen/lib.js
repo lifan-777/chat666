@@ -189,7 +189,6 @@ function table({ headers, rows, widths, caption: title, center = [] }) {
     const columnWidths = widthsFrom(widths || headers.map(() => 1));
     const header = new TableRow({
         tableHeader: true,
-        cantSplit: true,
         children: headers.map((h, i) => new TableCell({
             width: { size: columnWidths[i], type: WidthType.DXA },
             shading: { type: ShadingType.CLEAR, fill: COLOR.headerFill, color: 'auto' },
@@ -200,7 +199,6 @@ function table({ headers, rows, widths, caption: title, center = [] }) {
         })),
     });
     const body = rows.map((row) => new TableRow({
-        cantSplit: true,
         children: row.map((value, i) => new TableCell({
             width: { size: columnWidths[i], type: WidthType.DXA },
             verticalAlign: VerticalAlign.CENTER,
@@ -226,7 +224,6 @@ function table({ headers, rows, widths, caption: title, center = [] }) {
 function kvTable(pairs, { caption: title, keyWidth = 1, valueWidth = 4 } = {}) {
     const columnWidths = widthsFrom([keyWidth, valueWidth]);
     const rows = pairs.map(([k, v]) => new TableRow({
-        cantSplit: true,
         children: [
             new TableCell({
                 width: { size: columnWidths[0], type: WidthType.DXA },
